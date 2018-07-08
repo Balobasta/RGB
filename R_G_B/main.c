@@ -18,7 +18,7 @@ GPIO_InitTypeDef  gpio;
 TIM_TimeBaseInitTypeDef Timer;
 
 
-void Init_USART(void){
+void init_usart(void){
 		RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA,ENABLE);
 
 		GPIO_StructInit(&gpio);
@@ -56,15 +56,15 @@ void Init_USART(void){
 
 }
 
-void USART_char(uint16_t x){
+void usart_char(uint16_t x){
 	while (USART_GetFlagStatus(USART1, USART_FLAG_TC) == RESET);
         USART_SendData(USART1, x);
 }
 
-void USART_string(char *str){
+void usart_string(char *str){
 	  int i;
 	  for(i=0; i<=strlen(str);i++)
-		  USART_char(str[i]);
+		  usart_char(str[i]);
   }
 
 void USART1_IRQHandler(void) {
@@ -77,20 +77,20 @@ void USART1_IRQHandler(void) {
   		  }
   	}
 
-uint16_t USART_get_char(void)
+uint16_t usart_get_char(void)
   {
   	uint16_t data;
   	while (rb_index==wb_index);
   	data = rb[rb_index];
   	rb_index = (rb_index+1)%rb_size;
-  	USART_char(data);
+  	usart_char(data);
   	return data;
   }
 
-void USART_int(unsigned int x){
+void usart_int(unsigned int x){
 	char str[20];
 	itoa(x, str, 10);
-	USART_string(str);
+	usart_string(str);
 }
 
 void delay_loop(uint32_t DelayTicks) {
@@ -112,30 +112,33 @@ int main(void)
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB|RCC_APB2Periph_GPIOA|RCC_APB2Periph_AFIO, ENABLE);
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
 
-    Init_USART();
-    USART_string("\r r red_part g green_part  b blue_part \n\r colour_part - integer number, \n\r example r256 g124 b57 \n ");
-    SET_RGB(128,0,0);
+    init_usart();
+    usart_string("\r r red_part g green_part  b blue_part \n\r colour_part - integer number, \n\r example r256 g124 b57 \n ");
+    init_rgb(GPIO_RED, PIN_RED, PWM_LED_TIMER,PWM_LED_CHANEL_RED,0);
+    init_rgb(GPIO_GREEN, PIN_GREEN, PWM_LED_TIMER,PWM_LED_CHANEL_GREEN,0);
+    init_rgb(GPIO_BLUE, PIN_BLUE, PWM_LED_TIMER,PWM_LED_CHANEL_BLUE,0);
+    set_rgb(128,0,0);
     delay_loop(SystemCoreClock/25);
-    SET_RGB(0,128,0);
+    set_rgb(0,128,0);
     delay_loop(SystemCoreClock/25);
-    SET_RGB(0,0,128);
+    set_rgb(0,0,128);
     delay_loop(SystemCoreClock/25);
-    SET_RGB(128,128,128);
+    set_rgb(128,128,128);
     red=green=blue=128;
     while(1)
     {
-    	tmp=USART_get_char();
+    	tmp=usart_get_char();
     	if (tmp=='r'){
     		g1=1;
     		buf_i=0;
-    		tmp=USART_get_char();
+    		tmp=usart_get_char();
     		if (isdigit){
     			f1=1;
     		while(isdigit)
     		{
     			buf[buf_i]=tmp;
     			buf_i++;
-    			tmp=USART_get_char();
+    			tmp=usart_get_char();
     		}
     		buf[buf_i]=0;
     		red=(uint8_t)atoi(buf);
@@ -144,31 +147,31 @@ int main(void)
     	if (tmp=='g'){
     		g2=1;
     		buf_i=0;
-    		tmp=USART_get_char();
+    		tmp=usart_get_char();
     		if (isdigit){
     			f2=1;
     		while(isdigit)
     		{
     			buf[buf_i]=tmp;
     			buf_i++;
-    			tmp=USART_get_char();
+    			tmp=usart_get_char();
     		}
     		buf[buf_i]=0;
     	    green=(uint8_t)atoi(buf);
 
     		}else if (tmp=='e'){
     			g2=0;
-    			tmp=USART_get_char();
+    			tmp=usart_get_char();
     			if (tmp=='t'){
-    				tmp=USART_get_char();
+    				tmp=usart_get_char();
     					if (tmp=='_'){
-    						tmp=USART_get_char();
+    						tmp=usart_get_char();
     							if (tmp=='r'){
-    								tmp=USART_get_char();
+    								tmp=usart_get_char();
     								if (tmp=='g'){
-    									tmp=USART_get_char();
+    									tmp=usart_get_char();
     									if(tmp=='b'){
-    										tmp=USART_get_char();
+    										tmp=usart_get_char();
     										k=1;
     									}
     								}
@@ -179,14 +182,14 @@ int main(void)
     	if (tmp=='b'){
     		g3=1;
     		buf_i=0;
-    		tmp=USART_get_char();
+    		tmp=usart_get_char();
     		if (isdigit){
     			f3=1;
     		while(isdigit)
     		{
     			buf[buf_i]=tmp;
     			buf_i++;
-    			tmp=USART_get_char();
+    			tmp=usart_get_char();
     		}
     		buf[buf_i]=0;
     		blue=(uint8_t)atoi(buf);
@@ -198,29 +201,29 @@ int main(void)
 
     		f1=f2=f3=g1=g2=g3=0;
     		k=0;
-    		USART_string("\n\r r:");
-    		itoa( GET_RGB_RED(),l,10);
-    		USART_string (l);
-    		USART_string("\t");
+    		usart_string("\n\r r:");
+    		itoa( get_rgb_red(),l,10);
+    		usart_string (l);
+    		usart_string("\t");
 
-    		USART_string(" g:");
-			itoa( GET_RGB_GREEN(),l,10);
-			USART_string (l);
-			USART_string("\t");
+    		usart_string(" g:");
+			itoa( get_rgb_green(),l,10);
+			usart_string (l);
+			usart_string("\t");
 
-			USART_string(" b:");
-			itoa( GET_RGB_BLUE(),l,10);
-			USART_string (l);
-			USART_string("\t");
+			usart_string(" b:");
+			itoa( get_rgb_blue(),l,10);
+			usart_string (l);
+			usart_string("\t");
 
-			USART_string("\n\r");
+			usart_string("\n\r");
     	}else{
     		if (!f1 && g1) red=0;
     		if (!f2 && g2) green=0;
     		if (!f3 && g3) blue=0;
-    		USART_string("\n\r");
+    		usart_string("\n\r");
     		f1=f2=f3=g1=g2=g3=0;
-    		SET_RGB(red,green,blue);
+    		set_rgb(red,green,blue);
     	}
     	}
 

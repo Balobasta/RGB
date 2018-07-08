@@ -4,24 +4,13 @@
 #include <stdlib.h>
 
 #include "RGB.h"
-uint8_t red1=128,green1=128,blue1=128;
-#define hight 256
-#define midle 128
-#define low 20
-#define PWM_LED_TIMER TIM3
-#define PWM_LED_CHANEL_GREEN 2
-#define PWM_LED_CHANEL_RED 3
-#define PWM_LED_CHANEL_BLUE 4
-#define PIN_RED GPIO_Pin_0
-#define PIN_GREEN GPIO_Pin_7
-#define PIN_BLUE GPIO_Pin_1
-#define GPIO_RED GPIOB
-#define GPIO_GREEN GPIOA
-#define GPIO_BLUE GPIOB
-TIM_OCInitTypeDef  TIM_OCInitStruct;
-GPIO_InitTypeDef  gpio;
-TIM_TimeBaseInitTypeDef Timer;
-void Init_RGB(GPIO_InitTypeDef *GPIOx, uint16_t GPIO_Pin, TIM_TypeDef *TIMx,int channel,int intensity){
+
+
+void init_rgb(GPIO_InitTypeDef *GPIOx, uint16_t GPIO_Pin, TIM_TypeDef *TIMx,int channel,int intensity){
+	TIM_OCInitTypeDef  TIM_OCInitStruct;
+	GPIO_InitTypeDef  gpio;
+	TIM_TimeBaseInitTypeDef Timer;
+
 	gpio.GPIO_Pin =GPIO_Pin;
 	gpio.GPIO_Mode = GPIO_Mode_AF_PP;
 	gpio.GPIO_Speed = GPIO_Speed_50MHz;
@@ -62,21 +51,39 @@ void Init_RGB(GPIO_InitTypeDef *GPIOx, uint16_t GPIO_Pin, TIM_TypeDef *TIMx,int 
     }
     TIM_Cmd(TIMx,ENABLE);
 }
+void set_pwm(TIM_TypeDef *TIMx,int channel,uint8_t colour){
+	   switch(channel){
+	    case 1 :{
+	    	 TIMx->CCR1 = colour%256;
+	    	 break;
+	    }
+	    case 2: {
+	    	TIMx->CCR2 = colour%256;
+			break;
+	    }
+	    case 3:{
+	    	TIMx->CCR3 = colour%256;
+		    break;
+	    }
+	    case 4: {
+	    	TIMx->CCR4 = colour%256;
+		    break;
+	    }
+	           }
+}
 
-void SET_RGB(uint8_t red, uint8_t green,uint8_t blue){
-	Init_RGB(GPIO_RED,PIN_RED,PWM_LED_TIMER,PWM_LED_CHANEL_RED,red);
-	Init_RGB(GPIO_BLUE,PIN_BLUE,PWM_LED_TIMER,PWM_LED_CHANEL_BLUE,blue);
-	Init_RGB(GPIO_GREEN,PIN_GREEN,PWM_LED_TIMER,PWM_LED_CHANEL_GREEN,green);
-    red1=red;
-    green1=green;
-    blue1=blue;
+void set_rgb(uint8_t red, uint8_t green,uint8_t blue){
+	set_pwm(PWM_LED_TIMER,PWM_LED_CHANEL_RED,red);
+	set_pwm(PWM_LED_TIMER,PWM_LED_CHANEL_GREEN,green);
+	set_pwm(PWM_LED_TIMER,PWM_LED_CHANEL_BLUE,blue);
+
 }
-uint8_t GET_RGB_RED(){
-          return red1;
+uint8_t get_rgb_red(){
+	return  PWM_LED_TIMER->CCR3;
 }
-uint8_t GET_RGB_GREEN(){
-	   return green1;
+uint8_t get_rgb_green(){
+    return  PWM_LED_TIMER->CCR2;
 }
-uint8_t GET_RGB_BLUE(){
-	   return blue1;
+uint8_t get_rgb_blue(){
+	return  PWM_LED_TIMER->CCR4;
 }
