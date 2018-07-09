@@ -6,7 +6,7 @@
 #include "RGB.h"
 
 
-void init_rgb(GPIO_InitTypeDef *GPIOx, uint16_t GPIO_Pin, TIM_TypeDef *TIMx,int channel,int intensity){
+void init_rgb(GPIO_InitTypeDef *GPIOx, uint16_t GPIO_Pin, TIM_TypeDef *TIMx,int channel,int intensity,int arr){
 	TIM_OCInitTypeDef  TIM_OCInitStruct;
 	GPIO_InitTypeDef  gpio;
 	TIM_TimeBaseInitTypeDef Timer;
@@ -19,7 +19,7 @@ void init_rgb(GPIO_InitTypeDef *GPIOx, uint16_t GPIO_Pin, TIM_TypeDef *TIMx,int 
     TIM_TimeBaseStructInit(&Timer);
 	Timer.TIM_CounterMode = TIM_CounterMode_Up;
 	Timer.TIM_Prescaler =(SystemCoreClock/1000000)-1;
-	Timer.TIM_Period = 100;
+	Timer.TIM_Period = arr;
 	TIM_TimeBaseInit(TIMx, &Timer);
 
 	TIM_OCInitStruct.TIM_OCMode = TIM_OCMode_PWM1;
@@ -54,19 +54,19 @@ void init_rgb(GPIO_InitTypeDef *GPIOx, uint16_t GPIO_Pin, TIM_TypeDef *TIMx,int 
 void set_pwm(TIM_TypeDef *TIMx,int channel,uint8_t colour){
 	   switch(channel){
 	    case 1 :{
-	    	 TIMx->CCR1 = colour%256;
+	    	 TIMx->CCR1 = colour*(TIMx->ARR - 1)/255;
 	    	 break;
 	    }
 	    case 2: {
-	    	TIMx->CCR2 = colour%256;
+	    	TIMx->CCR2 = colour*(TIMx->ARR - 1)/255;
 			break;
 	    }
 	    case 3:{
-	    	TIMx->CCR3 = colour%256;
+	    	TIMx->CCR3 = colour*(TIMx->ARR - 1)/255;
 		    break;
 	    }
 	    case 4: {
-	    	TIMx->CCR4 = colour%256;
+	    	TIMx->CCR4 = colour*(TIMx->ARR - 1)/255;
 		    break;
 	    }
 	           }

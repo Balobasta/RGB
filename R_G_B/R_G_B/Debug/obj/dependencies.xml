@@ -22,8 +22,6 @@
          <include file="..\..\..\stm_lib\inc\stm32f10x_tim.h"/>
          <include file="..\..\..\stm_lib\inc\stm32f10x_rcc.h"/>
       </source>
-      <source file="..\..\..\RGB.h" lastModified="16478b0ca3b">
-      </source>
       <source file="..\..\..\stm_lib\src\stm32f10x_gpio.c" lastModified="1647547ddab">
          <include file="..\..\..\stm_lib\inc\stm32f10x_gpio.h"/>
          <include file="..\..\..\stm_lib\inc\stm32f10x_rcc.h"/>
@@ -45,10 +43,6 @@
       </source>
       <source file="..\..\..\stm_lib\src\stm32f10x_rcc.c" lastModified="1647547b0b7">
          <include file="..\..\..\stm_lib\inc\stm32f10x_rcc.h"/>
-      </source>
-      <source file="..\..\..\main.c" lastModified="16478b50010">
-         <include file="..\..\..\cmsis_boot\stm32f10x_conf.h"/>
-         <include file="..\..\..\RGB.h"/>
       </source>
       <source file="..\..\..\cmsis\core_cmFunc.h" lastModified="16475479c04">
       </source>

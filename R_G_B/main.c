@@ -97,7 +97,7 @@ void delay_loop(uint32_t DelayTicks) {
 __asm__ __volatile__ (
 "1: \n"
 "sub %[DelayTicks], %[DelayTicks], #1\n" //1tick
-"cmp %[DelayTicks], #0 \n" // 1tick
+"cmp %[DelayTicks], #0 \n" // 1tick /
 "bne 1b \n" //1 or 2 ticks
 : [DelayTicks] "+r"(DelayTicks)
 );
@@ -114,9 +114,9 @@ int main(void)
 
     init_usart();
     usart_string("\r r red_part g green_part  b blue_part \n\r colour_part - integer number, \n\r example r256 g124 b57 \n ");
-    init_rgb(GPIO_RED, PIN_RED, PWM_LED_TIMER,PWM_LED_CHANEL_RED,0);
-    init_rgb(GPIO_GREEN, PIN_GREEN, PWM_LED_TIMER,PWM_LED_CHANEL_GREEN,0);
-    init_rgb(GPIO_BLUE, PIN_BLUE, PWM_LED_TIMER,PWM_LED_CHANEL_BLUE,0);
+    init_rgb(GPIO_RED, PIN_RED, PWM_LED_TIMER,PWM_LED_CHANEL_RED,0,500);
+    init_rgb(GPIO_GREEN, PIN_GREEN, PWM_LED_TIMER,PWM_LED_CHANEL_GREEN,0,500);
+    init_rgb(GPIO_BLUE, PIN_BLUE, PWM_LED_TIMER,PWM_LED_CHANEL_BLUE,0,500);
     set_rgb(128,0,0);
     delay_loop(SystemCoreClock/25);
     set_rgb(0,128,0);
