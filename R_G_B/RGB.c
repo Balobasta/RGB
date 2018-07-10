@@ -79,11 +79,11 @@ void set_rgb(uint8_t red, uint8_t green,uint8_t blue){
 
 }
 uint8_t get_rgb_red(){
-	return  PWM_LED_TIMER->CCR3;
+	return  ((PWM_LED_TIMER->CCR3)*255/(PWM_LED_TIMER->ARR-1));
 }
 uint8_t get_rgb_green(){
-    return  PWM_LED_TIMER->CCR2;
+    return  ((PWM_LED_TIMER->CCR2)*255/(PWM_LED_TIMER->ARR-1));
 }
 uint8_t get_rgb_blue(){
-	return  PWM_LED_TIMER->CCR4;
+	return  ((PWM_LED_TIMER->CCR4)*255/(PWM_LED_TIMER->ARR-1));
 }
